@@ -11,50 +11,31 @@
 
 function interleave(stack) {
   var queue = [];
-  var startingStackLength = stack.length;
-  var halfStackLength = parseInt(startingStackLength / 2);
+  var halfLength = Math.floor(stack.length / 2);
 
-  // pop second half of stack onto queue
-  for (var i = 0; i < halfStackLength; i++) {
+  // pop entire stack onto queue
+  while (stack.length > 0) {
     queue.push(stack.pop());
   }
 
-  // push queue back onto stack and then pop off again to reverse order
-  for (var i = 0, length = queue.length; i < length; i++) {
+  // shuffle the front half of the queue to the back of the queue
+  for (var i = 0; i < halfLength; i++) {
+    queue.push(queue.shift());
+  }
+
+  // dequeue half of the queue and push onto stack
+  while (queue.length > halfLength) {
     stack.push(queue.shift());
-  }
-
-  for (var i = 0; i < halfStackLength; i++) {
-    queue.push(stack.pop());
   }
 
   // alternate between popping and enqueueing 1 element from the stack and
-  // dequeueing and enqueueing 1 element from the queue
-  var select;
-
-  if (startingStackLength % 2 === 0) {
-    select = "queue";
-  } else {
-    select = "stack";
+  // dequeueing and enqueueing 1 element from the queue until stack is empty
+  for (var i = 0; i < halfLength; i++) {
+    queue.push(stack.pop());
+    queue.push(queue.shift());
   }
 
-  for (var i = 0; i < startingStackLength; i++) {
-    if (select === "stack") {
-      queue.push(stack.pop());
-      select = "queue";
-    } else {
-      queue.push(queue.shift());
-      select = "stack";
-    }
-  }
-
-  // push entire queue back onto stack, and then pop entire stack back onto
-  // queue to reverse the order
-  for (var i = 0; i < startingStackLength; i++) {
-    stack.push(queue.shift());
-  }
-
-  for (var i = 0; i < startingStackLength; i++) {
+  if (stack.length > 0) {
     queue.push(stack.pop());
   }
 
