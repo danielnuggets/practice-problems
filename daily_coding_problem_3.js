@@ -4,10 +4,12 @@
 
 
 // basic binary tree implementation
-function Node(data) {
-  this.data = data;
-  this.left = null;
-  this.right = null;
+class Node {
+  constructor(data) {
+    this.data = data;
+    this.left = null;
+    this.right = null;
+  }
 }
 
 // "1,n,3,n,n,6,7"
