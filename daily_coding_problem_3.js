@@ -15,7 +15,7 @@ class Node {
 // "1,n,3,n,n,6,7"
 function serialize(root) {
   //running string of node values separated by commas
-  var s = `${root.data}`;
+  var s = "";
   // track current level of tree and next level of tree in arrays
   var currentLevel = [root];
   var nextLevel = [];
@@ -26,11 +26,11 @@ function serialize(root) {
 
       // add current level node data to string
       if (currentLevel[i] === null) {
-        s += "," + "n"; // in the string, "n" signifies null
+        s += "n" + ","; // in the string, "n" signifies null
         nextLevel.push(null, null);
         continue;
-      } else if (currentLevel.length > 1) { // skip if current level is root
-        s += "," + currentLevel[i].data;
+      } else {
+        s += currentLevel[i].data + ",";
       }
 
       // add left child to nextLevel array.
@@ -53,7 +53,7 @@ function serialize(root) {
     nextLevel = [];
   }
 
-  return s // return the serialized string
+  return s.slice(0, -1) // return the serialized string, removing last comma
 }
 
 // helper function for the array.some method
@@ -87,24 +87,18 @@ function deserialize(s) {
     // of the next level
     for (var i = 0; i < currentLevel.length; i++) {
 
-      if (currentLevel[i] === null) {
-        leftChild = null;
-        rightChild = null;
+      if (currentLevel[i] && values[nextLevelIndex]) {
+        leftChild = new Node(values[nextLevelIndex]);
+        currentLevel[i].left = leftChild;
       } else {
+        leftChild = null;
+      }
 
-        if (values[nextLevelIndex] === null) {
-          leftChild = null;
-        } else {
-          leftChild = new Node(values[nextLevelIndex]);
-          currentLevel[i].left = leftChild;
-        }
-
-        if (values[nextLevelIndex + 1] === null) {
-          rightChild = null;
-        } else {
-          rightChild = new Node(values[nextLevelIndex + 1]);
-          currentLevel[i].right = rightChild;
-        }
+      if (currentLevel[i] && values[nextLevelIndex + 1]) {
+        rightChild = new Node(values[nextLevelIndex + 1]);
+        currentLevel[i].right = rightChild;
+      } else {
+        rightChild = null;
       }
 
       nextLevel.push(leftChild, rightChild);
