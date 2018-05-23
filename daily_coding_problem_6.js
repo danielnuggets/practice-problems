@@ -34,6 +34,13 @@ class LinkedList {
     var nextIndex;
 
     for (var i = 0; i < position; i++) {
+
+      // if position goes beyond the tail (the tail will not have a next index,
+      // so its previous index will equal its xorNextPrev), an error is thrown.
+      if (previousIndex === this.nodesArray[currentIndex].xorNextPrev) {
+        throw "This position in linked list does not exist."
+      }
+
       // current xorNextPrev value = previous index ^ next index. therefore,
       // next index = previous index ^ current xorNextPrev value.
       nextIndex = previousIndex ^ this.nodesArray[currentIndex].xorNextPrev;
