@@ -9,45 +9,56 @@
 // nodes and memory addresses.
 
 
-// note that getPointer() and dereferencePointer() are not defined here. it is
-// assumed that these functions are available since JavaScipt does not have
-// pointers.
 class LinkedList {
   constructor(val) {
-    var headNode = new Node(val);
-    this.headAddress = getPointer(headNode);
-    this.tailAddress = this.headAddress;
+    // array's randomly assigned indices simulate node addresses in memory
+    this.nodesArray = [];
+    this.headIndex = Math.floor(Math.random() * 3);
+    this.nodesArray[this.headIndex] = new Node(val);
+    this.tailIndex = this.headIndex;
   }
 
   add(val) {
     var newNode = new Node(val);
-    var tail = dereferencePointer(this.tailAddress); // get tail node
-    tail.xor ^= get_pointer(newNode); // amend value of tail's xor
-    newNode.xor = this.tailAddress;  // assign value to new node's xor
-    this.tail = getPointer(newNode); // re-assign tail
-    return this;
+    var newIndex = this.tailIndex + Math.floor(Math.random() * 3 + 1);
+    this.nodesArray[newIndex] = newNode;
+    this.nodesArray[this.tailIndex].xorNextPrev ^= newIndex; // update tail xor
+    newNode.xorNextPrev = this.tailIndex; // set new node's xor
+    this.tailIndex = newIndex; // re-assign tail
+    return this; // allows chaining of add method
   }
 
-  get(index) {
-    var currentAddress = this.head;
-    var previousAddress = null;
-    var nextAddress;
+  get(position) {
+    var currentIndex = this.headIndex;
+    var previousIndex = null;
+    var nextIndex;
 
-    for (var i = 0; i < index; i++) {
-      // current xor value = previous address ^ next address. therefore,
-      // previous address ^ current xor value = next address.
-      nextAddress = previousAddress ^ dereferencePointer(currentAddress).xor;
-      previousAddress = currentAddress;
-      currentAddress = nextAddress;
+    for (var i = 0; i < position; i++) {
+      // current xorNextPrev value = previous index ^ next index. therefore,
+      // next index = previous index ^ current xorNextPrev value.
+      nextIndex = previousIndex ^ this.nodesArray[currentIndex].xorNextPrev;
+      previousIndex = currentIndex; // reset previousIndex
+      currentIndex = nextIndex; // reset currentIndex
     }
 
-    return dereferencePointer(currentAddress);
+    return this.nodesArray[currentIndex];
   }
 }
 
 class Node {
   constructor(val) {
     this.value = val;
-    this.xor = null; // xor of next and previous node
+    this.xorNextPrev = null; // xor of next node's index and prev node's index
   }
+}
+
+
+// test
+
+var list1 = new LinkedList(2);
+list1.add(4).add(6).add(8);
+if (list1.get(2).value === 6) {
+  console.log("pass");
+} else {
+  console.log("fail");
 }
