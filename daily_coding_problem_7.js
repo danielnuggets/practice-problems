@@ -24,8 +24,9 @@ function decodingCounter(s) {
     // check for invalid 0
     if (curr === '0' && !['1','2'].includes(prev)) {
       return 0;
-    // check for ambiguous double digit number
-  } else if (prev+curr > 10 && prev+curr < 27 && curr !== '0' && next !== '0') {
+    // if there is an ambiguous double digit number, the current count becomes
+    // the count at 1 digit away + the count at 2 digits away.
+    } else if (prev+curr > 10 && prev+curr < 27 && curr !== '0' && next !== '0') {
       countCurrent = countTwoBefore + countOneBefore;
     } else {
       countCurrent = countOneBefore;
